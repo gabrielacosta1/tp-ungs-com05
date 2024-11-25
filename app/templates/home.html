@@ -9,13 +9,11 @@
                 <li class="page-item disabled">
                     <a class="page-link">⬅️</a>
                 </li>
-                <li class="page-item active" aria-current="page">
-                    <a class="page-link" href="#">1</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                {% for num in page_object.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="{% url 'home-paginated' page=num %}">{{ num }}</a>
+                    </li>
+                {% endfor %}
                 <li class="page-item">
                     <a class="page-link" href="#">➡️</a>
                 </li>
@@ -33,9 +31,9 @@
     </div>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% if images|length == 0 %}
+        {% if page_object|length == 0 %}
         <h2 class="text-center">La búsqueda no arrojó resultados...</h2>
-        {% else %} {% for img in images %}
+        {% else %} {% for img in page_object %}
         <div class="col">
             <div class="card mb-3 ms-5" style="max-width: 540px;">
                 <div class="row g-0">
@@ -59,7 +57,7 @@
                         </div>
                         {% if request.user.is_authenticated %}
                         <div class="card-footer text-center">
-                            <form method="post" action="{% url 'agregar-favorito' %}">
+                            <form method="post" action="{% url 'agregar-favorito' %}" name="imagen">
                                 {% csrf_token %}
                                 <input type="hidden" name="name" value="{{ img.name }}">
                                 <input type="hidden" name="url" value="{{ img.url }}">
